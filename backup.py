@@ -10,15 +10,18 @@ from utils.rsync_caller import RsyncCaller
 
 def make_snap_shots(dataset_name: str, time: str):
     print(f"Creating ZFS snapshot with name {dataset_name}@{time}")
-
-    with subprocess.Popen(['zfs', 'snapshot', f"{dataset_name}@{time}"],
+    results = subprocess.run(
+        f"/bin/bash -c '/usr/sbin/zfs snapshot {dataset_name}@{time}'", shell=True, check=True, executable='/bin/bash')
+    """
+    with os.Popen(['/bin/bash', 'zfs', 'snapshot', f"{dataset_name}@{time}"],
                           stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1,
                           universal_newlines=True) as p:
         for line in p.stdout:
-            print(line)
+            print(line.strip("\n"))
         exit_code = p.wait()
         if exit_code != 0:
             raise Exception('Failed to create ZFS snapshot')
+    """
 
 
 def datetime_to_string(dtime: datetime.datetime):

@@ -32,7 +32,7 @@ class RsyncCaller:
                               stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1,
                               universal_newlines=True) as p:
             for line in p.stdout:
-                print(line)
+                print(line.strip("\n"))
             exit_code = p.wait()
             if exit_code != 0:
                 raise Exception(f'Rsync Failed with error code {exit_code}')
