@@ -9,7 +9,6 @@ from utils.rsync_caller import RsyncCaller
 
 
 def make_snap_shots(dataset_name: str, time: str):
-    dataset_name_stripped = dataset_name.strip(os.path.sep)
     print(f"Creating ZFS snapshot with name {dataset_name}@{time}")
     results = subprocess.run(
         f"/bin/bash -c '/usr/sbin/zfs snapshot {dataset_name}@{time}'", shell=True, check=True, executable='/bin/bash')
@@ -36,7 +35,10 @@ def main():
     args, unknown = parser.parse_known_args()
 
     if args.dataset[0] == os.path.sep:
-        raise Exception("dataset may not start with os.path.sep, this will be appended wheb actually running the rsync command")
+        raise Exception("dataset may not start with os.path.sep, this will be appended when actually running the rsync command.")
+
+    if args.dataset[-1] == os.path.sep:
+        raise Exception("dataset may not end with os.path.sep!")
 
     timestamp = datetime_to_string(datetime.datetime.now())
     try:
