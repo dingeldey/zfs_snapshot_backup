@@ -9,6 +9,7 @@ from utils.rsync_caller import RsyncCaller
 
 
 def make_snap_shots(dataset_name: str, time: str):
+    dataset_name_stripped = dataset_name.strip(os.path.sep)
     print(f"Creating ZFS snapshot with name {dataset_name}@{time}")
     results = subprocess.run(
         f"/bin/bash -c '/usr/sbin/zfs snapshot {dataset_name}@{time}'", shell=True, check=True, executable='/bin/bash')
