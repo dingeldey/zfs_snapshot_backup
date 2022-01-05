@@ -11,7 +11,7 @@ from utils.rsync_caller import RsyncCaller
 def make_snap_shots(dataset_name: str, time: str):
     print(f"Creating ZFS snapshot with name {dataset_name}@{time}")
     results = subprocess.run(
-        f"/bin/bash -c '/usr/sbin/zfs snapshot {dataset_name}@{time}'", shell=True, check=True, executable='/bin/bash')
+        f"/bin/bash -c '/usr/sbin/zfs snapshot -r {dataset_name}@{time}'", shell=True, check=True, executable='/bin/bash')
     """
     with os.Popen(['/bin/bash', 'zfs', 'snapshot', f"{dataset_name}@{time}"],
                           stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1,
@@ -42,13 +42,13 @@ def main():
 
     timestamp = datetime_to_string(datetime.datetime.now())
     try:
-        if args.take_snapshot:
-            make_snap_shots(args.dataset, timestamp)
         if args.quit_after_snapshot:
+            make_snap_shots(args.dataset, timestamp)
             sys.exit(0)
 
         rsync_policy: RsyncPolicy = RsyncPolicy(args.rsync_flag)
         RsyncCaller.sync_data(args.source, f"/{args.dataset}", rsync_policy)
+        make_snap_shots(args.dataset, timestamp)
 
     except Exception as e:
         print(e)
